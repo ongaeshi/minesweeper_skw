@@ -1,7 +1,10 @@
+Window.resize(270, 320, false)
 font = Font.new(30)
 
+Graphics.set_background([163, 176, 213])
+
+r = Rect.new(0, 50, 270, 270)
+
 while System.update do
-  Circle.new(Cursor.pos.x, Cursor.pos.y, 30).draw(Palette::Indigo)
-  Circle.new(Cursor.pos.x, Cursor.pos.y, 20).draw(Palette::Purple)
-  font["🐣Hello, SketchWaltz!💃"].draw_at(Window.center.x, Window.center.y, Palette::White)
+  r.draw([111, 139, 216])
 end
