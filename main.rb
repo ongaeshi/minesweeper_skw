@@ -1,16 +1,41 @@
+$font = Font.new(18)
+
+#---
 class Panel
   OFFSET = 2
+
+  attr_accessor :number
 
   def initialize(x, y)
     @x = x
     @y = y
+    @is_mine = false
+  end
+
+  def set_mine
+    @is_mine = true
+  end
+
+  def mine?
+    @is_mine
   end
 
   def update
   end
 
   def draw
-    RoundRect.new(@x+OFFSET, @y+OFFSET, 30-OFFSET*2, 30-OFFSET*2, 4).draw([240, 240, 240])
+    x = @x+OFFSET
+    y = @y+OFFSET
+    width = 30-OFFSET*2
+    height = 30-OFFSET*2
+    round = 4
+
+    if @is_mine
+      RoundRect.new(x, y, width, height, round).draw([255, 0, 255])
+    else
+      RoundRect.new(x, y, width, height, round).draw([240, 240, 240])
+      $font[@number.to_s].draw_at(@x+15, @y+15, [0, 0, 0])
+    end
   end
 
   def open
@@ -25,12 +50,14 @@ end
 
 class Ground
   def initialize(width, height, x_offset = 0, y_offset = 0)
+    @width = width
+    @height = height
     @panels = []
     @table = Array.new(width) { Array.new(height) }
 
     # init
-    0.upto(height-1) do |y|
-      0.upto(width-1) do |x|
+    0.upto(@height-1) do |y|
+      0.upto(@width-1) do |x|
         panel = Panel.new(
           x_offset + x * 30,
           y_offset + y * 30
@@ -42,6 +69,16 @@ class Ground
     end
 
     # set bomb
+    bomb = 0
+    while bomb < 10
+      x = Math.random(@width)
+      y = Math.random(@height)
+
+      unless @table[x][y].mine?
+        @table[x][y].set_mine
+        bomb += 1
+      end
+    end
 
     # calc number
   end
@@ -62,8 +99,6 @@ end
 #---
 Window.resize(270, 320, false)
 Graphics.set_background([125, 183, 72])
-
-font = Font.new(30)
 
 ground = Ground.new(9, 9, 0, 50)
 
