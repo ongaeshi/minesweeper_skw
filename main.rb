@@ -146,4 +146,7 @@ ground = Ground.new(9, 9, 0, 50)
 while System.update do
   ground.update
   ground.draw
+
+  # test
+  ground = Ground.new(9, 9, 0, 50) if MouseL.down
 end
