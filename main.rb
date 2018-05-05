@@ -34,7 +34,9 @@ class Panel
       RoundRect.new(x, y, width, height, round).draw([255, 0, 255])
     else
       RoundRect.new(x, y, width, height, round).draw([240, 240, 240])
-      $font[@number.to_s].draw_at(@x+15, @y+15, [0, 0, 0])
+      if @number > 0
+        $font[@number.to_s].draw_at(@x+15, @y+15, [0, 0, 0])
+      end
     end
   end
 
@@ -68,7 +70,7 @@ class Ground
       end
     end
 
-    # set bomb
+    # set mine
     bomb = 0
     while bomb < 10
       x = Math.random(@width)
@@ -81,9 +83,48 @@ class Ground
     end
 
     # calc number
+    0.upto(@height-1) do |y|
+      0.upto(@width-1) do |x|
+        calc_number(x, y)
+      end
+    end
+  end
+
+  def calc_number(x, y)
+    panel = panel(x, y)
+    return if panel.mine?
+
+    num = 0
+
+    pnl = panel(x - 1, y - 1)
+    num += 1 if pnl && pnl.mine?
+
+    pnl = panel(x, y - 1)
+    num += 1 if pnl && pnl.mine?
+
+    pnl = panel(x + 1, y - 1)
+    num += 1 if pnl && pnl.mine?
+
+    pnl = panel(x - 1, y)
+    num += 1 if pnl && pnl.mine?
+
+    pnl = panel(x + 1, y)
+    num += 1 if pnl && pnl.mine?
+
+    pnl = panel(x - 1, y + 1)
+    num += 1 if pnl && pnl.mine?
+
+    pnl = panel(x, y + 1)
+    num += 1 if pnl && pnl.mine?
+
+    pnl = panel(x + 1, y + 1)
+    num += 1 if pnl && pnl.mine?
+
+    panel.number = num
   end
 
   def panel(x, y)
+    return nil if x < 0 || x >= @width || y < 0 || y >= @height
     @table[x][y]
   end
 
