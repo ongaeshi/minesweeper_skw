@@ -1,16 +1,14 @@
 class Panel
   OFFSET = 2
 
-  def initialize(x, y)
-    @x = x
-    @y = y
+  def initialize
   end
 
   def update
   end
 
-  def draw
-    RoundRect.new(@x+OFFSET, @y+OFFSET, 30-OFFSET*2, 30-OFFSET*2, 4).draw([240, 240, 240])
+  def draw(x, y)
+    RoundRect.new(x+OFFSET, y+OFFSET, 30-OFFSET*2, 30-OFFSET*2, 4).draw([240, 240, 240])
   end
 
   def open
@@ -25,20 +23,15 @@ end
 
 class Ground
   def initialize(width, height, x_offset = 0, y_offset = 0)
-    @panels = []
+    @width = width
+    @height = height
+    @x_offset = x_offset
+    @y_offset = y_offset
     @table = Array.new(width) { Array.new(height) }
 
     # init
-    0.upto(height-1) do |y|
-      0.upto(width-1) do |x|
-        panel = Panel.new(
-          x_offset + x * 30,
-          y_offset + y * 30
-        )
-
-        @panels << panel
-        @table[x][y] = panel
-      end
+    each do |x, y|
+      @table[x][y] = Panel.new()
     end
 
     # set bomb
@@ -46,16 +39,28 @@ class Ground
     # calc number
   end
 
+  def each
+    0.upto(@height-1) do |y|
+      0.upto(@width-1) do |x|
+        yield x, y
+      end
+    end
+  end
+
   def panel(x, y)
     @table[x][y]
   end
 
   def update
-    @panels.each { |e| e.update }
+    each do |x, y|
+      panel(x, y).update
+    end
   end
 
   def draw
-    @panels.each { |e| e.draw }
+    each do |x, y|
+      panel(x, y).draw(@x_offset + x*30, @y_offset + y*30)
+    end
   end
 end
 
