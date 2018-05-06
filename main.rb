@@ -10,6 +10,7 @@ class Panel
     @x = x
     @y = y
     @is_mine = false
+    @is_open = false
   end
 
   def set_mine
@@ -18,6 +19,11 @@ class Panel
 
   def mine?
     @is_mine
+  end
+
+  def mouse_over?(x, y)
+    @x <= x && x <= @x + 30 &&
+    @y <= y && y <= @y + 30
   end
 
   def update
@@ -30,17 +36,24 @@ class Panel
     height = 30-OFFSET*2
     round = 4
 
-    if @is_mine
+    if !@is_open
+      RoundRect.new(x, y, width, height, round).draw([250, 250, 250])
+    elsif @is_mine
       RoundRect.new(x, y, width, height, round).draw([255, 0, 255])
     else
-      RoundRect.new(x, y, width, height, round).draw([240, 240, 240])
+      RoundRect.new(x, y, width, height, round).draw([50, 135, 44])
       if @number > 0
-        $font[@number.to_s].draw_at(@x+15, @y+15, [0, 0, 0])
+        $font[@number.to_s].draw_at(@x+15, @y+15, [255, 255, 255])
       end
     end
   end
 
   def open
+    @is_open = true
+  end
+
+  def open?
+    @is_open
   end
 
   def set_flag
@@ -129,6 +142,16 @@ class Ground
   end
 
   def update
+    # open panel
+    @panels.each do |e|
+      if MouseL.down &&
+         e.mouse_over?(Cursor.pos.x, Cursor.pos.y) &&
+         !e.open?
+        e.open
+      end
+    end
+
+    # update panel
     @panels.each { |e| e.update }
   end
 
@@ -148,5 +171,5 @@ while System.update do
   ground.draw
 
   # test
-  ground = Ground.new(9, 9, 0, 50) if MouseL.down
+  ground = Ground.new(9, 9, 0, 50) if MouseR.down
 end
