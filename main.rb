@@ -101,12 +101,8 @@ class Ground
       end
     end
 
-    # calc number
-    0.upto(@height-1) do |y|
-      0.upto(@width-1) do |x|
-        calc_number(x, y)
-      end
-    end
+    # set panel number
+    @panels.each { |e| set_panel_number(e) }
   end
 
   def each_surrounding_panels(pnl)
@@ -138,12 +134,10 @@ class Ground
     yield pnl if pnl
   end
 
-  def calc_number(x, y)
-    panel = get_panel(x, y)
+  def set_panel_number(panel)
     return if panel.mine?
 
     num = 0
-
     each_surrounding_panels(panel) do |e|
       num += 1 if e.mine?
     end
