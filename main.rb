@@ -3,6 +3,7 @@ $font = Font.new(18)
 #---
 class Panel
   OFFSET = 2
+  SIZE = 30
 
   attr_reader :x, :y
   attr_accessor :number
@@ -25,8 +26,8 @@ class Panel
   end
 
   def mouse_over?(xpos, ypos)
-    @xpos <= xpos && xpos <= @xpos + 30 &&
-    @ypos <= ypos && ypos <= @ypos + 30
+    @xpos <= xpos && xpos <= @xpos + SIZE &&
+    @ypos <= ypos && ypos <= @ypos + SIZE
   end
 
   def update
@@ -35,8 +36,8 @@ class Panel
   def draw
     xpos = @xpos+OFFSET
     ypos = @ypos+OFFSET
-    width = 30-OFFSET*2
-    height = 30-OFFSET*2
+    width = SIZE-OFFSET*2
+    height = SIZE-OFFSET*2
     round = 4
 
     if !@is_open
@@ -46,7 +47,7 @@ class Panel
     else
       RoundRect.new(xpos, ypos, width, height, round).draw([50, 135, 44])
       if @number > 0
-        $font[@number.to_s].draw_at(@xpos+15, @ypos+15, [255, 255, 255])
+        $font[@number.to_s].draw_at(@xpos+SIZE/2, @ypos+SIZE/2, [255, 255, 255])
       end
     end
   end
@@ -79,8 +80,8 @@ class Ground
         panel = Panel.new(
           x,
           y,
-          x_offset + x * 30,
-          y_offset + y * 30
+          x_offset + x * Panel::SIZE,
+          y_offset + y * Panel::SIZE
         )
 
         @panels << panel
