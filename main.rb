@@ -68,30 +68,40 @@ class Panel
 end
 
 class Ground
+  BOMB = 10
+
   def initialize(width, height, x_offset = 0, y_offset = 0)
     @width = width
     @height = height
+    @x_offset = x_offset
+    @y_offset = y_offset
     @panels = []
     @table = Array.new(width) { Array.new(height) }
 
-    # init
+    init_panel
+    set_mine
+    @panels.each { |e| set_panel_number(e) }
+  end
+
+  def init_panel
     0.upto(@height-1) do |y|
       0.upto(@width-1) do |x|
         panel = Panel.new(
           x,
           y,
-          x_offset + x * Panel::SIZE,
-          y_offset + y * Panel::SIZE
+          @x_offset + x * Panel::SIZE,
+          @y_offset + y * Panel::SIZE
         )
 
         @panels << panel
         @table[x][y] = panel
       end
     end
+  end
 
-    # set mine
+  def set_mine
     bomb = 0
-    while bomb < 10
+    while bomb < BOMB
       x = Math.random(@width)
       y = Math.random(@height)
 
@@ -100,9 +110,6 @@ class Ground
         bomb += 1
       end
     end
-
-    # set panel number
-    @panels.each { |e| set_panel_number(e) }
   end
 
   def each_surrounding_panels(pnl)
