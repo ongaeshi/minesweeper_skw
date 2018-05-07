@@ -109,40 +109,49 @@ class Ground
     end
   end
 
+  def each_surrounding_panels(pnl)
+    x = pnl.x
+    y = pnl.y
+
+    pnl = get_panel(x - 1, y - 1)
+    yield pnl if pnl
+
+    pnl = get_panel(x, y - 1)
+    yield pnl if pnl
+
+    pnl = get_panel(x + 1, y - 1)
+    yield pnl if pnl
+
+    pnl = get_panel(x - 1, y)
+    yield pnl if pnl
+
+    pnl = get_panel(x + 1, y)
+    yield pnl if pnl
+
+    pnl = get_panel(x - 1, y + 1)
+    yield pnl if pnl
+
+    pnl = get_panel(x, y + 1)
+    yield pnl if pnl
+
+    pnl = get_panel(x + 1, y + 1)
+    yield pnl if pnl
+  end
+
   def calc_number(x, y)
-    panel = panel(x, y)
+    panel = get_panel(x, y)
     return if panel.mine?
 
     num = 0
 
-    pnl = panel(x - 1, y - 1)
-    num += 1 if pnl && pnl.mine?
-
-    pnl = panel(x, y - 1)
-    num += 1 if pnl && pnl.mine?
-
-    pnl = panel(x + 1, y - 1)
-    num += 1 if pnl && pnl.mine?
-
-    pnl = panel(x - 1, y)
-    num += 1 if pnl && pnl.mine?
-
-    pnl = panel(x + 1, y)
-    num += 1 if pnl && pnl.mine?
-
-    pnl = panel(x - 1, y + 1)
-    num += 1 if pnl && pnl.mine?
-
-    pnl = panel(x, y + 1)
-    num += 1 if pnl && pnl.mine?
-
-    pnl = panel(x + 1, y + 1)
-    num += 1 if pnl && pnl.mine?
+    each_surrounding_panels(panel) do |e|
+      num += 1 if e.mine?
+    end
 
     panel.number = num
   end
 
-  def panel(x, y)
+  def get_panel(x, y)
     return nil if x < 0 || x >= @width || y < 0 || y >= @height
     @table[x][y]
   end
