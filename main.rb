@@ -163,6 +163,7 @@ class Ground
          e.mouse_over?(Cursor.pos.x, Cursor.pos.y) &&
          !e.open?
         e.open
+        break
       end
     end
 
