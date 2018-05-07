@@ -4,11 +4,14 @@ $font = Font.new(18)
 class Panel
   OFFSET = 2
 
+  attr_reader :x, :y
   attr_accessor :number
 
-  def initialize(x, y)
+  def initialize(x, y, xpos, ypos)
     @x = x
     @y = y
+    @xpos = xpos
+    @ypos = ypos
     @is_mine = false
     @is_open = false
   end
@@ -21,29 +24,29 @@ class Panel
     @is_mine
   end
 
-  def mouse_over?(x, y)
-    @x <= x && x <= @x + 30 &&
-    @y <= y && y <= @y + 30
+  def mouse_over?(xpos, ypos)
+    @xpos <= xpos && xpos <= @xpos + 30 &&
+    @ypos <= ypos && ypos <= @ypos + 30
   end
 
   def update
   end
 
   def draw
-    x = @x+OFFSET
-    y = @y+OFFSET
+    xpos = @xpos+OFFSET
+    ypos = @ypos+OFFSET
     width = 30-OFFSET*2
     height = 30-OFFSET*2
     round = 4
 
     if !@is_open
-      RoundRect.new(x, y, width, height, round).draw([250, 250, 250])
+      RoundRect.new(xpos, ypos, width, height, round).draw([250, 250, 250])
     elsif @is_mine
-      RoundRect.new(x, y, width, height, round).draw([255, 0, 255])
+      RoundRect.new(xpos, ypos, width, height, round).draw([255, 0, 255])
     else
-      RoundRect.new(x, y, width, height, round).draw([50, 135, 44])
+      RoundRect.new(xpos, ypos, width, height, round).draw([50, 135, 44])
       if @number > 0
-        $font[@number.to_s].draw_at(@x+15, @y+15, [255, 255, 255])
+        $font[@number.to_s].draw_at(@xpos+15, @ypos+15, [255, 255, 255])
       end
     end
   end
@@ -74,6 +77,8 @@ class Ground
     0.upto(@height-1) do |y|
       0.upto(@width-1) do |x|
         panel = Panel.new(
+          x,
+          y,
           x_offset + x * 30,
           y_offset + y * 30
         )
