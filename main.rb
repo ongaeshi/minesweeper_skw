@@ -6,7 +6,7 @@ class Panel
   SIZE = 30
 
   attr_reader :x, :y
-  attr_accessor :number, :delay_frame
+  attr_accessor :number
 
   def initialize(x, y, xpos, ypos)
     @x = x
@@ -14,8 +14,7 @@ class Panel
     @xpos = xpos
     @ypos = ypos
     @is_mine = false
-    @is_open = @is_open_display = false
-    @delay_frame = 0
+    @is_open = false
   end
 
   def set_mine
@@ -32,10 +31,6 @@ class Panel
   end
 
   def update
-    if @delay_frame > 0
-      @delay_frame -= 1
-      @is_open_display = true if @delay_frame == 0
-    end
   end
 
   def draw
@@ -45,7 +40,7 @@ class Panel
     height = SIZE-OFFSET*2
     round = 4
 
-    if !@is_open_display
+    if !@is_open
       RoundRect.new(xpos, ypos, width, height, round).draw([250, 250, 250])
     elsif @is_mine
       RoundRect.new(xpos, ypos, width, height, round).draw([255, 0, 255])
@@ -57,10 +52,8 @@ class Panel
     end
   end
 
-  def open(delay_frame = 0)
+  def open
     @is_open = true
-    @delay_frame = delay_frame
-    @is_open_display = true if @delay_frame == 0
   end
 
   def open?
@@ -171,7 +164,7 @@ class Ground
          !e.open? &&
          e.mouse_over?(Cursor.pos.x, Cursor.pos.y)
         e.open
-        open_arround_zero(e, 3)
+        open_arround_zero(e)
         break
       end
     end
@@ -180,17 +173,13 @@ class Ground
     @panels.each { |e| e.update }
   end
 
-  def open_arround_zero(panel, delay_frame)
+  def open_arround_zero(panel)
     return if panel.number != 0
 
-    next_delay_frame = delay_frame + 10
-
     each_surrounding_panels(panel) do |e|
-      if !e.open?
-        e.open(delay_frame)
-        open_arround_zero(e, next_delay_frame)
-      elsif e.delay_frame > next_delay_frame
-        e.delay_frame = next_delay_frame
+      unless e.open?
+        e.open
+        open_arround_zero(e)
       end
     end
   end
