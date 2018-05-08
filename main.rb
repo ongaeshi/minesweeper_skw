@@ -164,12 +164,24 @@ class Ground
          e.mouse_over?(Cursor.pos.x, Cursor.pos.y) &&
          !e.open?
         e.open
+        open_arround_zero(e)
         break
       end
     end
 
     # update panel
     @panels.each { |e| e.update }
+  end
+
+  def open_arround_zero(panel)
+    return if panel.number != 0
+
+    each_surrounding_panels(panel) do |e|
+      unless e.open?
+        e.open
+        open_arround_zero(e)
+      end
+    end
   end
 
   def draw
