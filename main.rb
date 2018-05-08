@@ -211,5 +211,8 @@ while System.update do
   ground.update
   ground.draw
 
-  # ground = Ground.new(9, 9, 0, 50) if MouseR.down
+  if MouseL.down &&
+     Cursor.pos.y < 40
+    ground = Ground.new(9, 9, 0, 50)
+  end
 end
