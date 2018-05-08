@@ -1,4 +1,5 @@
 $font = Font.new(18)
+$flag = Texture.new(Emoji.new("🚩")).resize(22, 22)
 
 #---
 class Panel
@@ -13,8 +14,7 @@ class Panel
     @y = y
     @xpos = xpos
     @ypos = ypos
-    @is_mine = false
-    @is_open = false
+    @is_mine = @is_open = @is_flag = false
   end
 
   def set_mine
@@ -42,6 +42,9 @@ class Panel
 
     if !@is_open
       RoundRect.new(xpos, ypos, width, height, round).draw([250, 250, 250])
+      if flag?
+        $flag.draw_at(@xpos+SIZE/2, @ypos+SIZE/2, [255, 128, 128])
+      end
     elsif @is_mine
       RoundRect.new(xpos, ypos, width, height, round).draw([255, 0, 255])
     else
@@ -60,10 +63,12 @@ class Panel
     @is_open
   end
 
-  def set_flag
+  def toggle_flag
+    @is_flag ^= true
   end
 
   def flag?
+    @is_flag
   end
 end
 
@@ -162,10 +167,15 @@ class Ground
     @panels.each do |e|
       if MouseL.down &&
          !e.open? &&
+         !e.flag? &&
          e.mouse_over?(Cursor.pos.x, Cursor.pos.y)
         e.open
         open_arround_zero(e)
         break
+      elsif MouseR.down &&
+            !e.open? &&
+            e.mouse_over?(Cursor.pos.x, Cursor.pos.y)
+        e.toggle_flag
       end
     end
 
@@ -199,6 +209,5 @@ while System.update do
   ground.update
   ground.draw
 
-  # test
-  ground = Ground.new(9, 9, 0, 50) if MouseR.down
+  # ground = Ground.new(9, 9, 0, 50) if MouseR.down
 end
