@@ -1,5 +1,6 @@
 $font = Font.new(18)
 $flag = Texture.new(Emoji.new("🚩")).resize(22, 22)
+$bomb = Texture.new(Emoji.new("💣")).resize(24, 24)
 
 #---
 class Panel
@@ -47,6 +48,7 @@ class Panel
       end
     elsif @is_mine
       RoundRect.new(xpos, ypos, width, height, round).draw([255, 0, 255])
+      $bomb.draw_at(@xpos+SIZE/2, @ypos+SIZE/2)
     else
       RoundRect.new(xpos, ypos, width, height, round).draw([50, 135, 44])
       if @number > 0
