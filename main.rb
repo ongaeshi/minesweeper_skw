@@ -161,8 +161,8 @@ class Ground
     # open panel
     @panels.each do |e|
       if MouseL.down &&
-         e.mouse_over?(Cursor.pos.x, Cursor.pos.y) &&
-         !e.open?
+         !e.open? &&
+         e.mouse_over?(Cursor.pos.x, Cursor.pos.y)
         e.open
         open_arround_zero(e)
         break
