@@ -6,7 +6,7 @@ class Panel
   SIZE = 30
 
   attr_reader :x, :y
-  attr_accessor :number
+  attr_accessor :number, :delay_frame
 
   def initialize(x, y, xpos, ypos)
     @x = x
@@ -183,10 +183,14 @@ class Ground
   def open_arround_zero(panel, delay_frame)
     return if panel.number != 0
 
+    next_delay_frame = delay_frame + 10
+
     each_surrounding_panels(panel) do |e|
-      unless e.open?
+      if !e.open?
         e.open(delay_frame)
-        open_arround_zero(e, delay_frame + 3)
+        open_arround_zero(e, next_delay_frame)
+      elsif e.delay_frame > next_delay_frame
+        e.delay_frame = next_delay_frame
       end
     end
   end
