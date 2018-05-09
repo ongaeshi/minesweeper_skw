@@ -2,6 +2,11 @@ $font = Font.new(18)
 $flag = Texture.new(Emoji.new("🚩")).resize(22, 22)
 $bomb = Texture.new(Emoji.new("💣")).resize(24, 24)
 
+FACE = {
+  sunglasses: Texture.new(Emoji.new("😎")).resize(48, 48),
+  sob: Texture.new(Emoji.new("😭")).resize(48, 48)
+}
+
 #---
 class Panel
   OFFSET = 2
@@ -166,18 +171,21 @@ class Ground
 
   def update
     # open panel
-    @panels.each do |e|
-      if MouseL.down &&
-         !e.open? &&
-         !e.flag? &&
-         e.mouse_over?(Cursor.pos.x, Cursor.pos.y)
-        e.open
-        open_arround_zero(e)
-        break
-      elsif MouseR.down &&
-            !e.open? &&
-            e.mouse_over?(Cursor.pos.x, Cursor.pos.y)
-        e.toggle_flag
+    unless @game_over
+      @panels.each do |e|
+        if MouseL.down &&
+           !e.open? &&
+           !e.flag? &&
+           e.mouse_over?(Cursor.pos.x, Cursor.pos.y)
+          e.open
+          @game_over = true if e.mine?
+          open_arround_zero(e)
+          break
+        elsif MouseR.down &&
+              !e.open? &&
+              e.mouse_over?(Cursor.pos.x, Cursor.pos.y)
+          e.toggle_flag
+        end
       end
     end
 
@@ -197,6 +205,10 @@ class Ground
   end
 
   def draw
+    kind = :sunglasses
+    kind = :sob if @game_over
+    FACE[kind].draw_at(Window.width/2, 25)
+
     @panels.each { |e| e.draw }
   end
 end
@@ -211,6 +223,7 @@ while System.update do
   ground.update
   ground.draw
 
+  # reset
   if MouseL.down &&
      Cursor.pos.y < 40
     ground = Ground.new(9, 9, 0, 50)
