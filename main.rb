@@ -81,7 +81,7 @@ class Panel
 end
 
 class Ground
-  BOMB = 40
+  BOMB = 10
 
   def initialize(width, height, x_offset = 0, y_offset = 0)
     @width = width
@@ -179,7 +179,10 @@ class Ground
            !e.flag? &&
            e.mouse_over?(Cursor.pos.x, Cursor.pos.y)
           e.open
-          @game_over = true if e.mine?
+          if e.mine?
+            @game_over = true
+            @panels.each { |e| e.open if e.mine? }
+          end
           open_arround_zero(e)
           break
         elsif MouseR.down &&
