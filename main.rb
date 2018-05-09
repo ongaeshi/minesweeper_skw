@@ -4,7 +4,8 @@ $bomb = Texture.new(Emoji.new("💣")).resize(24, 24)
 
 FACE = {
   sunglasses: Texture.new(Emoji.new("😎")).resize(48, 48),
-  sob: Texture.new(Emoji.new("😭")).resize(48, 48)
+  sob: Texture.new(Emoji.new("😭")).resize(48, 48),
+  blush: Texture.new(Emoji.new("😊")).resize(48, 48)
 }
 
 #---
@@ -80,7 +81,7 @@ class Panel
 end
 
 class Ground
-  BOMB = 10
+  BOMB = 40
 
   def initialize(width, height, x_offset = 0, y_offset = 0)
     @width = width
@@ -171,7 +172,7 @@ class Ground
 
   def update
     # open panel
-    unless @game_over
+    if !@game_over && !clear?
       @panels.each do |e|
         if MouseL.down &&
            !e.open? &&
@@ -193,6 +194,11 @@ class Ground
     @panels.each { |e| e.update }
   end
 
+  def clear?
+    open_num = @panels.find_all { |e| e.open? }.length
+    open_num == @panels.length - BOMB
+  end
+
   def open_arround_zero(panel)
     return if panel.number != 0
 
@@ -206,7 +212,12 @@ class Ground
 
   def draw
     kind = :sunglasses
-    kind = :sob if @game_over
+    if @game_over
+      kind = :sob
+    elsif clear?
+      kind = :blush
+    end
+
     FACE[kind].draw_at(Window.width/2, 25)
 
     @panels.each { |e| e.draw }
