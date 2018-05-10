@@ -1,4 +1,5 @@
 $font = Font.new(18)
+$fontl = Font.new(32)
 $flag = Texture.new(Emoji.new("🚩")).resize(22, 22)
 $bomb = Texture.new(Emoji.new("💣")).resize(24, 24)
 
@@ -214,6 +215,8 @@ class Ground
   end
 
   def draw
+    $fontl[(@mine).to_s].draw_at(220, 25, [258, 69, 29])
+
     kind = :sunglasses
     if @game_over
       kind = :sob
