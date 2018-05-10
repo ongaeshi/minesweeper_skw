@@ -197,6 +197,7 @@ class Ground
   end
 
   def clear?
+    return false if @game_over
     open_num = @panels.find_all { |e| e.open? }.length
     open_num == @panels.length - @mine
   end
@@ -226,15 +227,16 @@ class Ground
   end
 end
 
-def make_ground
-  Ground.new(9, 9, 0, 50, 10)
+def make_ground(mine)
+  Ground.new(9, 9, 0, 50, mine)
 end
 
 #---
 Window.resize(270, 320, false)
 Graphics.set_background([125, 183, 72])
 
-ground = make_ground
+mine = 1
+ground = make_ground(mine)
 
 while System.update do
   ground.update
@@ -243,6 +245,11 @@ while System.update do
   # reset
   if MouseL.down &&
      Cursor.pos.y < 40
-    ground = make_ground
+    if ground.clear?
+      mine += 1
+    else
+      mine = 1
+    end
+    ground = make_ground(mine)
   end
 end
