@@ -81,15 +81,14 @@ class Panel
 end
 
 class Ground
-  BOMB = 10
-
-  def initialize(width, height, x_offset = 0, y_offset = 0)
+  def initialize(width, height, x_offset, y_offset, mine)
     @width = width
     @height = height
     @x_offset = x_offset
     @y_offset = y_offset
     @panels = []
     @table = Array.new(width) { Array.new(height) }
+    @mine = mine
 
     init_panel
     set_mine
@@ -113,14 +112,14 @@ class Ground
   end
 
   def set_mine
-    bomb = 0
-    while bomb < BOMB
+    mine = 0
+    while mine < @mine
       x = Math.random(@width)
       y = Math.random(@height)
 
       unless @table[x][y].mine?
         @table[x][y].set_mine
-        bomb += 1
+        mine += 1
       end
     end
   end
@@ -199,7 +198,7 @@ class Ground
 
   def clear?
     open_num = @panels.find_all { |e| e.open? }.length
-    open_num == @panels.length - BOMB
+    open_num == @panels.length - @mine
   end
 
   def open_arround_zero(panel)
@@ -227,11 +226,15 @@ class Ground
   end
 end
 
+def make_ground
+  Ground.new(9, 9, 0, 50, 10)
+end
+
 #---
 Window.resize(270, 320, false)
 Graphics.set_background([125, 183, 72])
 
-ground = Ground.new(9, 9, 0, 50)
+ground = make_ground
 
 while System.update do
   ground.update
@@ -240,6 +243,6 @@ while System.update do
   # reset
   if MouseL.down &&
      Cursor.pos.y < 40
-    ground = Ground.new(9, 9, 0, 50)
+    ground = make_ground
   end
 end
