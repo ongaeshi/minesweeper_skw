@@ -1,5 +1,5 @@
 $font = Font.new(18)
-$fontl = Font.new(32)
+$fontl = Font.new(22)
 $flag = Texture.new(Emoji.new("🚩")).resize(22, 22)
 $bomb = Texture.new(Emoji.new("💣")).resize(24, 24)
 
@@ -214,8 +214,12 @@ class Ground
     end
   end
 
+  def flag_num
+    @panels.find_all { |e| e.flag? }.length
+  end
+
   def draw
-    $fontl[(@mine).to_s].draw_at(220, 25, [258, 69, 29])
+    $fontl["💣#{@mine} 🚩#{flag_num}"].draw_at(215, 25, [0, 0, 0, 180])
 
     kind = :sunglasses
     if @game_over
