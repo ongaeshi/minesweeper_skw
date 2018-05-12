@@ -88,9 +88,14 @@ class Ground
     @height = height
     @x_offset = x_offset
     @y_offset = y_offset
-    @panels = []
-    @table = Array.new(width) { Array.new(height) }
     @mine = mine
+    reset
+  end
+
+  def reset
+    @game_over = false
+    @panels = []
+    @table = Array.new(@width) { Array.new(@height) }
 
     init_panel
     set_mine
@@ -104,13 +109,8 @@ class Ground
       @mine = 1
     end
 
-    @panels = []
-    @table = Array.new(@width) { Array.new(@height) }
-
-    init_panel
-    set_mine
-    @panels.each { |e| set_panel_number(e) }
-  end
+    reset
+ end
 
   def init_panel
     0.upto(@height-1) do |y|
