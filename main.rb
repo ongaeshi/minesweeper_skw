@@ -2,6 +2,7 @@ $font = Font.new(18)
 $fontl = Font.new(22)
 $flag = Texture.new(Emoji.new("🚩")).resize(22, 22)
 $bomb = Texture.new(Emoji.new("💣")).resize(24, 24)
+$heart = Texture.new(Emoji.new("♥️")).resize(18, 18)
 
 FACE = {
   sunglasses: Texture.new(Emoji.new("😎")).resize(48, 48),
@@ -90,6 +91,21 @@ class Ground
     @panels = []
     @table = Array.new(width) { Array.new(height) }
     @mine = mine
+
+    init_panel
+    set_mine
+    @panels.each { |e| set_panel_number(e) }
+  end
+
+  def continue
+    if clear?
+      @mine += 1
+    else
+      @mine = 1
+    end
+
+    @panels = []
+    @table = Array.new(@width) { Array.new(@height) }
 
     init_panel
     set_mine
@@ -219,7 +235,12 @@ class Ground
   end
 
   def draw
-    $fontl["💣#{@mine} 🚩#{flag_num}"].draw_at(215, 25, [0, 0, 0, 180])
+    $fontl["💣#{@mine} 🚩#{flag_num}"].draw_at(55, 25, [0, 0, 0, 180])
+
+    pos = 195
+    $heart.draw_at(pos, 25)
+    $heart.draw_at(pos + 20, 25)
+    $heart.draw_at(pos + 40, 25)
 
     kind = :sunglasses
     if @game_over
@@ -251,12 +272,8 @@ while System.update do
 
   # reset
   if MouseL.down &&
-     Cursor.pos.y < 40
-    if ground.clear?
-      mine += 1
-    else
-      mine = 1
-    end
-    ground = make_ground(mine)
+     115 < Cursor.pos.x && Cursor.pos.x < 155 &&
+     5 < Cursor.pos.y && Cursor.pos.y < 45
+    ground.continue
   end
 end
