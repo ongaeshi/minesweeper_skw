@@ -106,6 +106,7 @@ class Ground
   def continue
     if clear?
       @mine += 1
+      @life += 1 if @mine % 10 == 0
     else
       @life -= 1
       if @life == 0
