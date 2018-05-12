@@ -89,6 +89,7 @@ class Ground
     @x_offset = x_offset
     @y_offset = y_offset
     @mine = mine
+    @life = 3
     reset
   end
 
@@ -106,7 +107,11 @@ class Ground
     if clear?
       @mine += 1
     else
-      @mine = 1
+      @life -= 1
+      if @life == 0
+        @mine = 1
+        @life = 3
+      end
     end
 
     reset
@@ -238,9 +243,9 @@ class Ground
     $fontl["💣#{@mine} 🚩#{flag_num}"].draw_at(55, 25, [0, 0, 0, 180])
 
     pos = 195
-    $heart.draw_at(pos, 25)
-    $heart.draw_at(pos + 20, 25)
-    $heart.draw_at(pos + 40, 25)
+    0.upto(@life-1) do |e|
+      $heart.draw_at(pos + e*25, 25)
+    end
 
     kind = :sunglasses
     if @game_over
